@@ -31,9 +31,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API配置
-DEEPSEEK_API_KEY = "sk-15c714316ccd4eceb9c5df6c7835c484"
-DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
+# API配置 - 从环境变量读取
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # 加载.env文件
+
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "your_api_key_here")
+DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 
 # 系统指令 - 优化版，引导更详细的回答
 SYSTEM_PROMPT = """你是涂序彦教授，中国人工智能领域的泰斗。你的回答应该：
