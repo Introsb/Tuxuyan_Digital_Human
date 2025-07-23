@@ -1,0 +1,146 @@
+# ===== React项目标准.gitignore文件 =====
+
+# ===== Node.js依赖 =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ===== React构建输出 =====
+build/
+dist/
+out/
+
+# ===== 开发工具生成的临时文件 =====
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+
+# ===== 环境变量文件 =====
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===== 日志文件 =====
+*.log
+logs/
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ===== 测试覆盖率报告 =====
+coverage/
+*.lcov
+.nyc_output/
+.coverage/
+.pytest_cache/
+
+# ===== IDE和编辑器配置文件 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ===== 系统生成的缓存文件 =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ===== 临时文件 =====
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# ===== 运行时数据 =====
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ===== 可选的npm缓存目录 =====
+.npm
+
+# ===== 可选的eslint缓存 =====
+.eslintcache
+
+# ===== Microbundle缓存 =====
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# ===== 可选的REPL历史 =====
+.node_repl_history
+
+# ===== Yarn完整性文件 =====
+.yarn-integrity
+
+# ===== dotenv环境变量文件 =====
+.env.test
+
+# ===== parcel-bundler缓存 =====
+.cache
+.parcel-cache
+
+# ===== TypeScript缓存 =====
+*.tsbuildinfo
+
+# ===== Storybook构建输出 =====
+.out
+.storybook-out
+
+# ===== Rush临时文件 =====
+common/temp/
+
+# ===== Webpack Bundle Analyzer =====
+bundle-report.html
+
+# ===== ESLint和Prettier缓存 =====
+.eslintcache
+.prettiercache
+
+# ===== Tailwind CSS =====
+.tailwindcss-cache/
+
+# ===== React DevTools Profiler =====
+react-devtools-profiler/
+
+# ===== 其他常见忽略文件 =====
+*.tgz
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# ===== 备份文件 =====
+*.bak
+*.backup
+*.old
+
+# ===== 锁定文件（可选，根据团队需要） =====
+# package-lock.json
+# yarn.lock
+
+# ===== 自定义忽略（项目特定） =====
+# 添加项目特定的忽略规则
