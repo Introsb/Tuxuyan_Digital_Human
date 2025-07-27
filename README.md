@@ -6,11 +6,12 @@
 
 本项目包含一个完整的AI数字人对话系统，具备以下特性：
 
-- **前端界面**：基于React 18 + Tailwind CSS的现代化用户界面
-- **后端API**：基于FastAPI的高性能API服务器
-- **AI集成**：集成DeepSeek API，提供智能对话功能
-- **实时交互**：支持打字机效果、思考状态显示等交互特性
-- **响应式设计**：完美适配桌面端和移动端
+- **🎤 语音交互**：支持语音录音、语音识别(ASR)和文本转语音(TTS)
+- **🤖 智能对话**：集成AI模型，提供教授风格的专业回复
+- **🎨 现代UI**：基于React 18 + Tailwind CSS，黑白双色调设计
+- **📱 响应式**：完美适配桌面端和移动端设备
+- **🚀 一键启动**：统一启动脚本，同时启动前后端服务
+- **🛠️ 开发友好**：完整的测试脚本和调试工具
 
 ## 🏗️ 项目结构
 
@@ -27,11 +28,69 @@
 └── test_ui_fixes.md            # UI修复测试文档
 ```
 
-## 🚀 快速开始
+## 🚀 快速启动
+
+### 方法1: 统一启动（推荐）
+```bash
+# 一键启动前端和后端服务
+python start_unified.py
+```
+
+### 方法2: 分别启动
+```bash
+# 启动后端 (终端1)
+python debug_server.py
+
+# 启动前端 (终端2)
+cd react-version && npm start
+```
+
+### 🌐 访问地址
+- **前端界面**: http://localhost:3000
+- **后端API**: http://127.0.0.1:8000
+
+## 📦 构建和部署
+
+### 开发环境构建
+```bash
+# 构建React生产版本
+cd react-version
+npm run build
+
+# 本地预览构建结果
+npx serve -s build -l 3000
+```
+
+### 生产环境部署
+```bash
+# 运行自动化部署脚本
+python3 deploy_production.py
+
+# 手动部署
+cd react-version
+npm run build
+# 将build文件夹部署到您的服务器
+```
+
+### Docker部署
+```bash
+# 使用Docker Compose一键部署
+docker-compose up -d
+
+# 分别构建镜像
+docker build -f Dockerfile.frontend -t tuxuyan-frontend .
+docker build -f Dockerfile.backend -t tuxuyan-backend .
+```
+
+### 云平台部署
+- **前端**: Vercel, Netlify, GitHub Pages
+- **后端**: Railway, Heroku, DigitalOcean
+- **完整应用**: AWS, Google Cloud, Azure
+- **API文档**: http://127.0.0.1:8000/docs
 
 ### 环境要求
 
-- **Python**: 3.8+
+- **Python**: 3.10+
 - **Node.js**: 16+
 - **npm**: 8+
 

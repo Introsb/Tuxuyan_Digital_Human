@@ -4,11 +4,13 @@
 用于验证前端修复效果
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 import time
+import io
 
 app = FastAPI(title="测试API服务器")
 
@@ -26,6 +28,19 @@ class UserQuery(BaseModel):
 
 class BotResponse(BaseModel):
     answer: str
+
+class ASRResponse(BaseModel):
+    text: str
+    confidence: float = 0.95
+    success: bool = True
+    message: str = ""
+
+class TTSRequest(BaseModel):
+    text: str
+    voice: str = "zh-CN-male"
+    speed: int = 5
+    pitch: int = 5
+    volume: int = 5
 
 @app.get("/")
 async def root():
@@ -134,6 +149,68 @@ class IntelligentSystem:
     
     print(f"✅ 生成回复: {answer[:100]}...")
     return BotResponse(answer=answer)
+
+@app.post("/asr", response_model=ASRResponse)
+async def speech_to_text(audio_file: UploadFile = File(...)):
+    """模拟语音识别端点"""
+    print(f"🎤 [ASR] 收到音频文件: {audio_file.filename}")
+
+    # 模拟处理时间
+    time.sleep(0.5)
+
+    # 返回模拟识别结果
+    mock_texts = [
+        "你好，我想了解人工智能的发展历程",
+        "请介绍一下控制论的基本概念",
+        "什么是知识工程",
+        "人工生命有什么特点",
+        "请谈谈您对未来AI发展的看法"
+    ]
+
+    import random
+    mock_text = random.choice(mock_texts)
+
+    print(f"✅ [ASR] 模拟识别结果: {mock_text}")
+    return ASRResponse(
+        text=mock_text,
+        confidence=0.95,
+        success=True,
+        message="模拟识别成功"
+    )
+
+@app.post("/tts")
+async def text_to_speech(request: TTSRequest):
+    """模拟文本转语音端点"""
+    print(f"🔊 [TTS] 合成请求: {request.text[:50]}...")
+
+    # 模拟处理时间
+    time.sleep(0.3)
+
+    # 创建模拟WAV音频数据
+    mock_audio = b'RIFF\x24\x08\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x40\x1f\x00\x00\x80\x3e\x00\x00\x02\x00\x10\x00data\x00\x08\x00\x00'
+    mock_audio += b'\x00' * 2048  # 添加静音数据
+
+    print(f"✅ [TTS] 模拟合成成功，音频大小: {len(mock_audio)} bytes")
+
+    return StreamingResponse(
+        io.BytesIO(mock_audio),
+        media_type="audio/wav",
+        headers={
+            "Content-Disposition": "attachment; filename=mock_tts.wav",
+            "Access-Control-Allow-Origin": "*"
+        }
+    )
+
+@app.get("/speech_status")
+async def speech_status():
+    """语音服务状态检查"""
+    return {
+        "baidu_speech_available": False,
+        "asr_enabled": True,
+        "tts_enabled": True,
+        "app_id": "模拟服务",
+        "message": "模拟语音服务正常运行"
+    }
 
 if __name__ == "__main__":
     print("🚀 启动测试API服务器...")

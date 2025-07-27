@@ -2,196 +2,251 @@ import React, { useState, useRef, useEffect } from 'react';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
 import WelcomeScreen from './WelcomeScreen';
+import DigitalHuman from './DigitalHuman';
+import ChatHeader from './ChatHeader';
 
-// 随机欢迎消息
+// 随机欢迎消息数组
 const randomWelcomeMessages = [
-  "我是涂序彦。", 
-  "今天想和我交流什么？", 
-  "很高兴能与您交流。",
-  "有什么可以帮您的吗？", 
-  "探索AI，从这里开始。"
+  "在忙什么？",
+  "糊涂居士玩转AI！",
+  "您好！我是涂先生数字人模型。",
+  "很高兴见到您!",
+  "Hello USTB!",
+  "I love AI!"
 ];
 
 const ChatArea = ({ isWelcoming, messages, addMessage, updateMessage }) => {
-  const [welcomeMessage] = useState(randomWelcomeMessages[
+  const [welcomeMessage, setWelcomeMessage] = useState(randomWelcomeMessages[
     Math.floor(Math.random() * randomWelcomeMessages.length)
   ]);
-  const [isTtsOn, setIsTtsOn] = useState(true);
+  const [isTtsOn, setIsTtsOn] = useState(false);
   const contentRef = useRef(null);
 
-  // 生成唯一ID的函数
-  const generateUniqueId = () => {
-    return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-  };
+  // 欢迎语随机刷新效果
+  useEffect(() => {
+    if (isWelcoming) {
+      const interval = setInterval(() => {
+        // 确保选择不同的欢迎消息
+        setWelcomeMessage(prevMessage => {
+          const availableMessages = randomWelcomeMessages.filter(msg => msg !== prevMessage);
+          const randomIndex = Math.floor(Math.random() * availableMessages.length);
+          return availableMessages[randomIndex] || randomWelcomeMessages[0];
+        });
+      }, 4000); // 每4秒刷新一次，给打字机效果足够时间
 
-  // 打字机效果函数 - 重新设计
-  const typewriterEffect = (text, thinkingMessageId, startTime, updateMessage) => {
-    const words = text.split(' ');
-    let currentText = '';
-    let wordIndex = 0;
+      return () => clearInterval(interval);
+    }
+  }, [isWelcoming]);
 
-    const typeInterval = setInterval(() => {
-      if (wordIndex < words.length) {
-        currentText += (wordIndex > 0 ? ' ' : '') + words[wordIndex];
+  // 动态视口高度计算（处理移动端浏览器地址栏）
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      // 获取真实的视口高度
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
 
-        // 更新思考消息为当前打字内容
-        const updatedMessage = {
-          id: thinkingMessageId,
-          text: currentText,
-          sender: 'bot',
-          timestamp: Date.now(),
-          isTyping: true,
-          isThinking: false
-        };
+    // 初始设置
+    updateViewportHeight();
 
-        updateMessage(updatedMessage);
-        wordIndex++;
-      } else {
-        // 打字完成，显示完成状态
-        const endTime = Date.now();
-        const duration = ((endTime - startTime) / 1000).toFixed(1);
+    // 监听窗口大小变化
+    window.addEventListener('resize', updateViewportHeight);
+    window.addEventListener('orientationchange', updateViewportHeight);
 
-        const finalMessage = {
-          id: thinkingMessageId,
-          text: text,
-          sender: 'bot',
-          timestamp: Date.now(),
-          isTyping: false,
-          isThinking: false,
-          duration: duration,
-          isCompleted: true
-        };
+    // 清理事件监听器
+    return () => {
+      window.removeEventListener('resize', updateViewportHeight);
+      window.removeEventListener('orientationchange', updateViewportHeight);
+    };
+  }, []);
 
-        updateMessage(finalMessage);
-        clearInterval(typeInterval);
-      }
-    }, 180); // 调整为180ms每词，更舒适的阅读速度
-  };
+  // 自动滚动到底部
+  useEffect(() => {
+    if (contentRef.current && !isWelcoming) {
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }
+  }, [messages, isWelcoming]);
 
-  // 真实API调用 - 重新设计，避免重复消息
-  const handleSendMessage = async (text) => {
-    const userMessageId = generateUniqueId();
-    const startTime = Date.now();
+  // 处理发送消息
+  const handleSendMessage = async (messageText, audioBlob = null) => {
+    console.log("ChatArea - 处理发送消息:", messageText);
 
-    console.log("发送消息，用户消息ID:", userMessageId);
+    if (!messageText.trim() && !audioBlob) return;
 
     // 添加用户消息
     const userMessage = {
-      id: userMessageId,
-      text,
+      id: Date.now(),
+      text: messageText,
       sender: 'user',
-      timestamp: Date.now()
+      timestamp: new Date(),
+      audioBlob: audioBlob
     };
 
     addMessage(userMessage);
-    console.log("用户消息已添加:", userMessage);
 
-    // 记录开始时间
-
-    // 添加唯一的思考状态消息
-    const thinkingMessageId = generateUniqueId();
+    // 添加AI思考状态
     const thinkingMessage = {
-      id: thinkingMessageId,
-      text: "正在思考...",
-      sender: 'bot',
-      timestamp: Date.now(),
+      id: Date.now() + 1,
+      text: '',
+      sender: 'ai',
+      timestamp: new Date(),
       isThinking: true
     };
+
     addMessage(thinkingMessage);
 
-    // 使用传入的updateMessage函数
-
     try {
-      console.log("发送请求到后端API...");
+      // 调用真正的后端API
+      console.log("🚀 调用后端AI API...");
 
-      // 真实API请求
+      // 创建AbortController用于超时控制
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60秒超时
+
       const response = await fetch('http://127.0.0.1:8000/ask_professor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: text }),
+        body: JSON.stringify({
+          prompt: messageText
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId); // 清除超时定时器
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API错误 ${response.status}: ${errorText}`);
+        throw new Error(`API调用失败: ${response.status} ${response.statusText}\n详情: ${errorText}`);
       }
 
-      const data = await response.json();
-      console.log("收到API响应:", data);
+      const result = await response.json();
+      console.log("✅ AI API响应:", result);
 
-      if (!data || !data.answer) {
-        throw new Error("API响应格式错误：缺少answer字段");
-      }
-
-      // 开始打字机效果，直接更新思考消息
-      typewriterEffect(data.answer, thinkingMessageId, startTime, updateMessage);
-
-      console.log("开始打字机效果:", data.answer);
-
-    } catch (error) {
-      console.error("API调用错误:", error);
-
-      // 更新思考消息为错误消息
-      const errorMessage = {
-        id: thinkingMessageId,
-        text: `❌ 连接错误: ${error.message}\n\n请确保后端服务器正在运行在 http://127.0.0.1:8000`,
-        sender: 'bot',
-        timestamp: Date.now(),
+      // 更新AI消息
+      const aiResponse = {
+        id: thinkingMessage.id,
+        text: result.answer || '抱歉，我暂时无法回答这个问题。',
+        sender: 'ai',
+        timestamp: new Date(),
         isThinking: false,
-        isError: true
+        isNew: true,  // 标记为新消息，用于自动播放
+        source: result.source || 'unknown',
+        thinking_time: result.thinking_time || 0
       };
 
-      updateMessage(errorMessage);
-      console.log("错误消息已更新:", errorMessage);
+      updateMessage(aiResponse);
+
+      // 清除isNew标记，避免重复自动播放
+      setTimeout(() => {
+        updateMessage({ ...aiResponse, isNew: false });
+      }, 1000);
+
+    } catch (error) {
+      console.error("❌ AI API调用失败:", error);
+
+      let errorMessage = "抱歉，AI服务暂时不可用。";
+      let canRetry = false;
+
+      if (error.name === 'AbortError') {
+        errorMessage = "⏰ 请求超时（60秒），AI可能正在处理复杂问题。";
+        canRetry = true;
+      } else if (error.message.includes('Failed to fetch')) {
+        errorMessage = "🌐 网络连接失败，请检查网络连接。";
+        canRetry = true;
+      } else if (error.message.includes('500')) {
+        errorMessage = "🔧 服务器内部错误，请稍后重试。";
+        canRetry = true;
+      } else if (error.message.includes('404')) {
+        errorMessage = "❓ API端点不存在，请检查后端服务器配置。";
+      } else {
+        errorMessage = `❌ 未知错误：${error.message}`;
+        canRetry = true;
+      }
+
+      // 显示错误消息
+      const errorResponse = {
+        id: thinkingMessage.id,
+        text: `${errorMessage}\n\n${canRetry ? '💡 您可以点击重试按钮重新发送消息。' : ''}`,
+        sender: 'ai',
+        timestamp: new Date(),
+        isThinking: false,
+        isError: true,
+        canRetry: canRetry,
+        originalPrompt: messageText
+      };
+
+      updateMessage(errorResponse);
     }
   };
 
-  // 滚动到底部
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTop = contentRef.current.scrollHeight;
-    }
-  }, [messages]);
+  // 检查是否有AI正在思考
+  const isAiThinking = messages.some(msg => msg.isThinking);
 
   return (
-    <div className={`flex-grow flex flex-col overflow-y-auto px-4 relative ${isWelcoming ? 'items-center' : ''}`}>
-      {/* Scrollable content */}
-      <div ref={contentRef} className={`flex-grow overflow-y-auto flex flex-col ${isWelcoming ? 'justify-center w-full' : ''}`}>
-        {isWelcoming ? (
-          <>
-            <WelcomeScreen message={welcomeMessage} />
-            {/* 在欢迎状态下，将输入框放在内容区域内，以实现真正的垂直居中 */}
-            <div className="w-full max-w-3xl mx-auto mt-12">
-              <InputArea 
-                onSendMessage={handleSendMessage} 
-                isTtsOn={isTtsOn}
-                setIsTtsOn={setIsTtsOn}
-                isWelcoming={isWelcoming}
-                inlineStyle={true}
-              />
-            </div>
-          </>
-        ) : (
-          <MessageList messages={messages} />
-        )}
-      </div>
+    <div className="h-full flex flex-col fullscreen-chat-container">
+      {/* 主要内容区域 - 全屏高度数字人和聊天卡片布局 */}
+      <div className="flex-1 p-4 lg:p-6 xl:p-8 min-h-0">
+        <div className="h-full max-w-7xl mx-auto">
+          {/* 卡片容器 - 全屏高度适配 */}
+          <div className="h-full max-w-5xl mx-auto">
+            <div className="h-full flex gap-4 lg:gap-6 transition-all duration-300 ease-out fullscreen-grid golden-ratio-layout">
 
-      {/* Footer input area - 只在非欢迎状态下显示 */}
-      {!isWelcoming && (
-        <div className="mt-auto">
-          <InputArea 
-            onSendMessage={handleSendMessage} 
-            isTtsOn={isTtsOn}
-            setIsTtsOn={setIsTtsOn}
-            isWelcoming={isWelcoming}
-            inlineStyle={false}
-          />
+              {/* 数字人卡片 - 与聊天卡片同高，9:16比例 */}
+              <div className="digital-human-container fullscreen-card-height">
+                <div className="digital-human-card">
+                  <DigitalHuman
+                    isThinking={isAiThinking}
+                    isWelcoming={isWelcoming}
+                    welcomeMessage={welcomeMessage}
+                  />
+                </div>
+              </div>
+
+              {/* 统一聊天卡片 - 黄金比例宽度，全屏高度 */}
+              <div className="chat-container fullscreen-card-height flex-1">
+                <div className="h-full bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden fullscreen-chat-card">
+                  {/* 聊天卡片顶部 - 校徽区域，固定高度 */}
+                  <div className="flex-shrink-0">
+                    <ChatHeader />
+                  </div>
+
+                  {/* 聊天内容区域 - 可滚动，占据剩余空间 */}
+                  <div ref={contentRef} className="flex-1 min-h-0 overflow-y-auto chat-messages-container">
+                    <div className="p-4 h-full">
+                      {isWelcoming ? (
+                        <div className="flex items-center justify-center h-full min-h-[300px]">
+                          <WelcomeScreen message={welcomeMessage} />
+                        </div>
+                      ) : (
+                        <MessageList
+                          messages={messages}
+                          isTtsOn={isTtsOn}
+                          onRetryMessage={handleSendMessage}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 输入框区域 - 固定在底部，增加左右边距 */}
+                  <div className="flex-shrink-0 px-6 py-4 bg-gray-50/50 chat-input-fixed">
+                    <InputArea
+                      onSendMessage={handleSendMessage}
+                      isTtsOn={isTtsOn}
+                      setIsTtsOn={setIsTtsOn}
+                      isWelcoming={isWelcoming}
+                      inlineStyle={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default ChatArea; 
+export default ChatArea;

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>快速布局测试</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        .container { 
+            display: flex; 
+            gap: 20px; 
+            height: 600px; 
+            border: 2px solid #ccc;
+            padding: 20px;
+        }
+        .digital-human-card {
+            height: 100%;
+            aspect-ratio: 9 / 16;
+            width: auto;
+            background: lightblue;
+            border: 2px solid blue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .chat-card {
+            flex: 1;
+            height: 100%;
+            background: lightgreen;
+            border: 2px solid green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h2>布局测试</h2>
+        <p>这个测试展示了正确的布局：</p>
+        <ul>
+            <li>数字人卡片（蓝色）：高度100%，宽度由9:16比例自动计算</li>
+            <li>聊天卡片（绿色）：占据剩余空间</li>
+            <li>两个卡片高度完全一致</li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="digital-human-card">
+            数字人卡片<br>
+            9:16比例<br>
+            <span id="digital-size"></span>
+        </div>
+        <div class="chat-card">
+            聊天卡片<br>
+            占据剩余空间<br>
+            <span id="chat-size"></span>
+        </div>
+    </div>
+    
+    <script>
+        function updateSizes() {
+            const digital = document.querySelector('.digital-human-card');
+            const chat = document.querySelector('.chat-card');
+            
+            const digitalSize = `${digital.offsetWidth}x${digital.offsetHeight}`;
+            const chatSize = `${chat.offsetWidth}x${chat.offsetHeight}`;
+            const ratio = (digital.offsetWidth / digital.offsetHeight).toFixed(4);
+            const expectedRatio = (9/16).toFixed(4);
+            
+            document.getElementById('digital-size').textContent = digitalSize;
+            document.getElementById('chat-size').textContent = chatSize;
+            
+            console.log('数字人卡片尺寸:', digitalSize);
+            console.log('聊天卡片尺寸:', chatSize);
+            console.log('数字人宽高比:', ratio);
+            console.log('期望比例 9/16:', expectedRatio);
+            console.log('高度差异:', Math.abs(digital.offsetHeight - chat.offsetHeight) + 'px');
+        }
+        
+        window.addEventListener('load', updateSizes);
+        window.addEventListener('resize', updateSizes);
+    </script>
+</body>
+</html>

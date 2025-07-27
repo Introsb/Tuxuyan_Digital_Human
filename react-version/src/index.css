@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 全局设计系统：一致性基石 */
+:root {
+  /* 动态视口高度变量 */
+  --vh: 1vh;
+
+  /* 间距系统 */
+  --spacing-xs: 4px;
+  --spacing-s: 8px;
+  --spacing-m: 16px;
+  --spacing-l: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* 卡片间距系统 - 统一紧凑间距 */
+  --card-gap: 12px;
+  --card-padding: 16px;
+
+  /* 圆角系统 */
+  --border-radius-s: 4px;
+  --border-radius-m: 8px;
+  --border-radius-l: 12px;
+  --border-radius-xl: 16px;
+
+  /* 颜色系统 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-hover: #f1f3f4;
+  --bg-active: #e8eaed;
+
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-tertiary: #9aa0a6;
+
+  --border-light: #e8eaed;
+  --border-medium: #dadce0;
+
+  /* 阴影系统 */
+  --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  --shadow-md: 0 2px 8px 0 rgba(60, 64, 67, 0.15);
+  --shadow-lg: 0 4px 12px 0 rgba(60, 64, 67, 0.15);
+
+  /* 过渡系统 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
 body {
   @apply font-sans font-extralight;
 }
@@ -909,11 +957,11 @@ body {
 }
 
 /* 打字机光标效果 - 简洁样式 */
-.typing-cursor::after {
-  content: '|';
-  color: #6b7280; /* 使用灰色替代蓝色 */
+.typing-cursor {
+  color: #6b7280; /* 使用灰色 */
   animation: cursor-blink 1s infinite;
   margin-left: 2px;
+  font-weight: normal;
 }
 
 @keyframes cursor-blink {
@@ -922,5 +970,1523 @@ body {
   }
   51%, 100% {
     opacity: 0;
+  }
+}
+
+/* ===== 新布局响应式设计 ===== */
+
+/* 新的汉堡菜单按钮样式 */
+.sidebar-toggle-btn {
+  z-index: 1001;
+  position: fixed;
+}
+
+/* 侧边栏布局优化 */
+.sidebar-container {
+  position: relative;
+  z-index: 1000;
+}
+
+/* 卡片顶部区域样式 - 为汉堡菜单留出空间 */
+.digital-human-card,
+.chat-card {
+  position: relative;
+  z-index: 1; /* 确保卡片在正确的层级 */
+}
+
+/* 欢迎语随机播放动画效果 */
+.welcome-message {
+  animation: fadeInOut 0.5s ease-in-out;
+}
+
+/* 淡入动画效果 */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(5px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0.7;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 录音相关动画 */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 音频播放器样式 */
+.audio-player {
+  transition: all 0.3s ease-in-out;
+}
+
+.audio-player:hover {
+  background-color: #f8f9fa;
+}
+
+/* 录音按钮脉冲动画 - 黑白设计 */
+@keyframes recordingPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  }
+}
+
+/* 录音按钮悬停效果 */
+@keyframes buttonHover {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
+/* 录音状态切换动画 */
+@keyframes recordingStateChange {
+  0% {
+    transform: scale(1);
+    background-color: transparent;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1.1);
+    background-color: black;
+  }
+}
+
+/* 音量指示器动画优化 */
+@keyframes volumeIndicator {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 录音波形动画 */
+@keyframes waveform {
+  0%, 100% {
+    height: 8px;
+  }
+  50% {
+    height: 16px;
+  }
+}
+
+/* 录音按钮专用样式类 - 统一尺寸为36px */
+.voice-recorder-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;  /* 36px - 与其他按钮保持一致 */
+  height: 2.25rem; /* 36px - 与其他按钮保持一致 */
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  padding: 0.375rem; /* 6px内边距 */
+}
+
+.voice-recorder-btn:not(.recording):not(.processing) {
+  background: transparent;
+  border: 2px solid #d1d5db;
+  color: #374151;
+}
+
+.voice-recorder-btn:not(.recording):not(.processing):hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: scale(1.02);
+}
+
+.voice-recorder-btn.recording {
+  background: #000000;
+  border: 2px solid #000000;
+  color: white;
+  transform: scale(1.05); /* 减小缩放比例，适应新尺寸 */
+  animation: recordingPulse 2s infinite;
+}
+
+.voice-recorder-btn.processing {
+  background: #f3f4f6;
+  border: 2px solid #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.voice-recorder-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voice-recorder-btn:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 录音状态容器样式 */
+.recording-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 侧边栏适应性布局 */
+.sidebar-container {
+  flex-shrink: 0;
+  background-color: #f8f9fa; /* 与页面背景色保持一致 */
+  border-right: none; /* 移除边框，超窄状态下不需要 */
+  overflow: hidden; /* 防止内容溢出 */
+  position: relative;
+  z-index: 1; /* 进一步降低z-index，确保不覆盖主内容 */
+}
+
+/* 强制侧边栏宽度设置 */
+.sidebar-container.w-\[260px\] {
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
+}
+
+.sidebar-container.w-\[20px\] {
+  width: 20px !important;
+  min-width: 20px !important;
+  max-width: 20px !important;
+}
+
+/* 侧边栏切换时的平滑过渡 */
+.sidebar-container.w-0 {
+  border-right: none;
+}
+
+/* 主内容区域布局优化 */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* 主内容区域适应性 */
+main {
+  flex-grow: 1;
+  min-width: 0; /* 确保flex子元素可以收缩 */
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 主内容区域的内层容器 */
+main > div {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 主内容区域的居中容器 */
+main > div > div:first-child {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 聊天布局容器 */
+.chat-layout {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  z-index: 100; /* 确保在侧边栏之上 */
+  display: flex;
+  gap: 1rem; /* 卡片间距 */
+  align-items: stretch;
+}
+
+/* 确保主内容区域不被侧边栏遮挡 */
+.digital-human-card,
+.chat-card,
+.input-card {
+  position: relative;
+  z-index: 200; /* 大幅提高z-index，确保卡片在最上层 */
+  transition: all 0.3s ease-in-out; /* 添加过渡动画 */
+}
+
+/* 数字人卡片响应式布局 - 已移至主要定义处 */
+/* 旧的固定宽度样式已被移除，现在使用9:16比例自动计算宽度 */
+
+/* 聊天卡片响应式布局 */
+.chat-card {
+  flex: 1; /* 占据剩余空间，约60% */
+  min-width: 400px; /* 最小宽度限制 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 防止内容溢出 */
+  transition: all 0.3s ease-in-out; /* 平滑过渡 */
+}
+
+/* 输入框卡片响应式布局 */
+.input-card {
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden; /* 防止内容溢出 */
+}
+
+/* 确保卡片内容不会溢出 */
+.digital-human-card > *,
+.chat-card > *,
+.input-card > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 聊天内容区域的滚动处理 */
+.chat-card .overflow-y-auto {
+  max-height: calc(100vh - 300px); /* 确保不会超出视口 */
+}
+
+/* 生产级流体布局优化 */
+@layer utilities {
+  /* 硬件加速的平滑过渡 */
+  .fluid-transition {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+
+  /* 防止布局抖动 */
+  .layout-stable {
+    contain: layout style;
+  }
+
+  /* 优化滚动性能 */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 响应式断点优化 */
+@media (max-width: 1023px) {
+  /* 在 lg 断点以下，Grid 自动变为单列 */
+  .grid-cols-1.lg\\:grid-cols-5 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 高性能动画 - 只使用 transform 和 opacity */
+@media (prefers-reduced-motion: no-preference) {
+  .grid {
+    transition: grid-template-columns 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* 减少动画偏好设置 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 现代化汉堡菜单按钮动画 */
+.hamburger-icon {
+  position: relative;
+}
+
+.hamburger-line {
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 汉堡菜单按钮悬停效果 */
+.group:hover .hamburger-line {
+  background-color: rgb(55, 65, 81); /* text-gray-700 */
+}
+
+/* 按钮按下效果 */
+.group:active {
+  transform: scale(0.95);
+}
+
+/* 焦点状态优化 */
+.group:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* 按钮微妙的脉冲动画 */
+@keyframes pulse-subtle {
+  0%, 100% {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.group:hover {
+  animation: pulse-subtle 2s infinite;
+}
+
+/* 输入框区域精致样式 */
+.composer-area {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 输入框聚焦时的微妙发光效果 */
+.composer-area:focus-within {
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.3),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* 垂直中轴线对齐优化 */
+.content-alignment {
+  max-width: 80rem; /* max-w-5xl */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== 专业级组件样式系统 ===== */
+
+/* 侧边栏样式 */
+.sidebar {
+  transition: width var(--transition-normal), margin-left var(--transition-normal);
+  will-change: width, margin-left;
+}
+
+.sidebar.hidden {
+  margin-left: -280px;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* 新建对话按钮 - ChatGPT风格 */
+.new-chat-btn {
+  padding: var(--spacing-m);
+  border-radius: var(--border-radius-m);
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+}
+
+.new-chat-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+.new-chat-btn:active {
+  background-color: var(--bg-active);
+  transform: scale(0.98);
+}
+
+/* 侧边栏切换按钮 */
+.sidebar-toggle-btn {
+  padding: var(--spacing-s);
+  border-radius: var(--border-radius-m);
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+/* 欢迎面板样式 */
+.welcome-panel {
+  padding: var(--spacing-xl);
+}
+
+.avatar-container {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* 示例问题卡片 */
+.suggestion-card {
+  padding: var(--spacing-m);
+  border-radius: var(--border-radius-l);
+  border: 1px solid var(--border-light);
+  background: var(--bg-primary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.suggestion-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.suggestion-card:active {
+  transform: translateY(0);
+}
+
+/* 输入区域优化 */
+.input-wrapper {
+  padding: var(--spacing-m);
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-light);
+}
+
+/* 聊天消息区域 */
+.chat-messages {
+  padding: var(--spacing-m);
+}
+
+/* 聊天区域滚动优化 */
+.chat-content-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.chat-content-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-content-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-content-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.chat-content-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* 全屏高度聊天容器 */
+.fullscreen-chat-container {
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+}
+
+/* 全屏网格布局 */
+.fullscreen-grid {
+  height: 100%;
+  min-height: calc(100vh - 2rem); /* 减去padding */
+}
+
+/* 全屏卡片高度 */
+.fullscreen-card-height {
+  height: 100%;
+  min-height: calc(100vh - 2rem); /* 减去padding */
+}
+
+/* 全屏聊天卡片样式 */
+.fullscreen-chat-card {
+  height: 100% !important;
+  min-height: calc(100vh - 2rem) !important;
+  max-height: calc(100vh - 2rem) !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 兼容原有的固定高度样式（向后兼容） */
+.fixed-chat-card {
+  height: 620px !important;
+  max-height: 620px !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 聊天消息容器 - 严格控制滚动区域 */
+.chat-messages-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 优化滚动条样式 */
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Firefox滚动条样式 */
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+/* 输入框区域 - 固定高度，无分界线 */
+.chat-input-fixed {
+  height: auto;
+  min-height: 80px;
+  max-height: 120px;
+  flex-shrink: 0;
+  /* 移除顶部边框，保持视觉连贯性 */
+  /* border-top: 1px solid #e5e7eb; */
+  background-color: rgba(249, 250, 251, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+/* 统一圆形按钮样式 */
+.circular-button {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.circular-button:hover {
+  transform: scale(1.05);
+}
+
+.circular-button:active {
+  transform: scale(0.95);
+}
+
+.circular-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+/* 圆形按钮尺寸变体 */
+.circular-button-sm {
+  width: 2rem;
+  height: 2rem;
+}
+
+.circular-button-md {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.circular-button-lg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* 黄金比例布局样式 */
+.golden-ratio-layout {
+  display: flex;
+  align-items: stretch;
+}
+
+/* 数字人容器 - 宽度由子元素的9:16比例决定 */
+.digital-human-container {
+  /* 不设置固定宽度，让子元素的9:16比例决定宽度 */
+  flex: 0 0 auto;
+  width: auto; /* 宽度由子元素决定 */
+
+  /* 确保容器高度与聊天卡片一致 */
+  height: 100%; /* 继承父容器的全屏高度 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 数字人卡片 - 高度与聊天卡片一致，宽度由9:16比例决定 */
+.digital-human-card {
+  /* 关键设置：高度100%，宽度由9:16比例自动计算 */
+  height: 100% !important;
+  aspect-ratio: 9 / 16 !important;
+  width: auto !important;
+
+  /* 确保没有其他尺寸限制 */
+  max-height: none !important;
+  min-height: auto !important;
+  max-width: none !important;
+  min-width: auto !important;
+
+  /* 布局 */
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* 视觉样式 */
+  overflow: hidden;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+/* 确保数字人卡片内容适应9:16比例 */
+.digital-human-card > * {
+  flex-shrink: 0;
+}
+
+/* 桌面端特定样式 - 保证高度一致且9:16比例 */
+@media (min-width: 1024px) {
+  .digital-human-card {
+    height: 100% !important; /* 确保与聊天卡片高度一致 */
+    aspect-ratio: 9 / 16 !important; /* 保持9:16比例 */
+    width: auto !important; /* 宽度由比例自动计算 */
+  }
+}
+
+/* 聊天容器 - 根据黄金比例适应数字人卡片宽度 */
+.chat-container {
+  /* 使用CSS calc()根据数字人卡片宽度计算聊天卡片宽度 */
+  /* 如果数字人卡片宽度为W，则聊天卡片宽度为 W ÷ 0.382 */
+  flex: 1;
+  min-width: 0; /* 允许收缩 */
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+  .golden-ratio-layout {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .digital-human-container {
+    width: 100%; /* 移动端占满宽度 */
+    height: auto; /* 在移动端允许自动高度 */
+  }
+
+  .digital-human-card {
+    height: auto !important; /* 移动端允许自动高度 */
+    width: 100% !important; /* 移动端占满容器宽度 */
+    aspect-ratio: 16 / 9; /* 平板端改为横屏比例 */
+    max-height: 300px;
+  }
+
+  .chat-container {
+    flex: 1;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .digital-human-card {
+    height: auto !important; /* 移动端允许自动高度 */
+    width: 100% !important; /* 移动端占满容器宽度 */
+    aspect-ratio: 4 / 3; /* 手机端使用更紧凑的比例 */
+    max-height: 250px;
+  }
+}
+
+/* 数字人内容样式 - 适应9:16比例 */
+.digital-human-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+/* 确保数字人内容在9:16比例下正确显示 */
+.digital-human-card .digital-human-content {
+  padding: 0.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 数字人内容区域的子元素 */
+.digital-human-card .digital-human-content > * {
+  flex-shrink: 0;
+}
+
+/* 中间内容区域可以伸缩 */
+.digital-human-card .digital-human-content .flex-1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 调整数字人头像在竖屏比例下的大小 */
+@media (min-width: 1024px) {
+  .digital-human-card .text-6xl {
+    font-size: 3rem; /* 调整emoji大小以适应竖屏 */
+  }
+
+  .digital-human-card .md\\:text-7xl {
+    font-size: 3.5rem;
+  }
+
+  .digital-human-card .lg\\:text-8xl {
+    font-size: 4rem;
+  }
+}
+
+/* 确保消息列表不会撑开容器 */
+.chat-messages-container .flex.flex-col {
+  min-height: auto;
+}
+
+/* 全屏响应式设计 */
+@media (min-width: 1024px) {
+  /* 桌面端：使用完整视口高度减去padding */
+  .fullscreen-grid {
+    min-height: calc(100vh - 4rem); /* lg:p-6 = 1.5rem * 2 = 3rem, xl:p-8 = 2rem * 2 = 4rem */
+  }
+
+  .fullscreen-card-height {
+    min-height: calc(100vh - 4rem);
+  }
+
+  .fullscreen-chat-card {
+    min-height: calc(100vh - 4rem) !important;
+    max-height: calc(100vh - 4rem) !important;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  /* 平板端：调整padding */
+  .fullscreen-grid {
+    min-height: calc(100vh - 3rem); /* lg:p-6 = 1.5rem * 2 = 3rem */
+  }
+
+  .fullscreen-card-height {
+    min-height: calc(100vh - 3rem);
+  }
+
+  .fullscreen-chat-card {
+    min-height: calc(100vh - 3rem) !important;
+    max-height: calc(100vh - 3rem) !important;
+  }
+
+  .chat-input-fixed {
+    padding: 0.75rem;
+    min-height: 70px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* 移动端：使用动态视口高度变量 */
+  .fullscreen-chat-container {
+    height: calc(var(--vh, 1vh) * 100); /* 使用JavaScript计算的真实视口高度 */
+    min-height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
+  }
+
+  .fullscreen-grid {
+    min-height: calc(var(--vh, 1vh) * 100 - 2rem); /* p-4 = 1rem * 2 = 2rem */
+  }
+
+  .fullscreen-card-height {
+    min-height: calc(var(--vh, 1vh) * 100 - 2rem);
+  }
+
+  .fullscreen-chat-card {
+    min-height: calc(var(--vh, 1vh) * 100 - 2rem) !important;
+    max-height: calc(var(--vh, 1vh) * 100 - 2rem) !important;
+  }
+
+  .chat-input-fixed {
+    padding: 0.5rem;
+    min-height: 60px;
+  }
+}
+
+/* 支持现代浏览器的动态视口单位作为备选 */
+@supports (height: 100dvh) {
+  @media (max-width: 767px) {
+    .fullscreen-chat-container {
+      height: 100dvh;
+      min-height: 100dvh;
+      max-height: 100dvh;
+    }
+
+    .fullscreen-grid {
+      min-height: calc(100dvh - 2rem);
+    }
+
+    .fullscreen-card-height {
+      min-height: calc(100dvh - 2rem);
+    }
+
+    .fullscreen-chat-card {
+      min-height: calc(100dvh - 2rem) !important;
+      max-height: calc(100dvh - 2rem) !important;
+    }
+  }
+}
+
+/* 向后兼容：原有固定高度样式 */
+@media (max-width: 1024px) {
+  .fixed-chat-card {
+    height: 500px !important;
+    max-height: 500px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .fixed-chat-card {
+    height: 450px !important;
+    max-height: 450px !important;
+  }
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .welcome-panel {
+    padding: var(--spacing-l);
+  }
+
+  .suggestion-prompts .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+  }
+
+  .sidebar.hidden {
+    margin-left: -100%;
+  }
+}
+
+/* 文本截断工具类 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ===== 垂直布局优化样式 ===== */
+
+/* 统一卡片样式 */
+.card-container {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-normal);
+}
+
+.card-container:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* 数字人卡片优化 - 过渡效果已合并到主要定义 */
+/* .digital-human-card transition样式已移至主要定义处 */
+
+/* 聊天卡片优化 */
+.chat-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+/* 输入框卡片优化 */
+.composer-area {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  transition: all var(--transition-normal);
+}
+
+.composer-area:focus-within {
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.3),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  :root {
+    --card-gap: 8px;
+    --card-padding: 12px;
+  }
+
+  .min-h-\[580px\] {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --card-gap: 6px;
+    --card-padding: 10px;
+  }
+}
+
+/* ===== 数字人卡片跨行布局优化 ===== */
+
+/* 确保所有卡片在Grid布局中正确显示 */
+.grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 数字人卡片跨行布局 */
+@media (min-width: 1024px) {
+  .digital-human-span-2 {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+
+  .chat-span-3 {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+
+  .input-span-3 {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+}
+
+/* 数字人卡片高度优化 - 移除固定高度，让aspect-ratio控制 */
+/* .digital-human-card height样式已移至主要定义处 */
+
+/* 聊天卡片高度优化 */
+.chat-card {
+  min-height: 400px;
+  height: 100%;
+}
+
+/* 输入框卡片高度优化 */
+.composer-area {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+}
+
+/* 确保数字人组件填满容器 */
+.digital-human-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 响应式高度调整 - 数字人卡片高度已在主要定义处处理 */
+@media (max-width: 1024px) {
+  .chat-card {
+    min-height: 400px;
+  }
+
+  .composer-area {
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-card {
+    min-height: 300px;
+  }
+
+  .composer-area {
+    min-height: 80px;
+  }
+}
+
+/* ===== 任务1：欢迎界面重构样式 ===== */
+
+/* 欢迎面板 - 聚焦式设计 */
+.welcome-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+/* 主要欢迎内容 */
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-l);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* 风格化头像 */
+.welcome-avatar {
+  margin-bottom: var(--spacing-l);
+}
+
+.avatar-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  border: 4px solid var(--bg-primary);
+  transition: transform var(--transition-normal);
+}
+
+.avatar-container:hover {
+  transform: scale(1.05);
+}
+
+.avatar-inner {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 主标题 */
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+/* 副标题/欢迎语 */
+.welcome-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0;
+}
+
+/* 示例问题区域 */
+.suggestion-prompts {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.prompts-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-m);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prompts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-m);
+}
+
+/* 示例问题卡片 */
+.suggestion-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-m);
+  padding: var(--spacing-m);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-l);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.suggestion-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.suggestion-card:active {
+  transform: translateY(0);
+}
+
+.suggestion-icon {
+  font-size: 1.25rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.suggestion-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.suggestion-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 欢迎页底部提示 */
+.welcome-footer {
+  margin-top: var(--spacing-xl);
+}
+
+.welcome-footer p {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ===== 任务2：侧边栏样式精致化 ===== */
+
+/* 侧边栏容器 */
+.sidebar {
+  transition: width var(--transition-normal);
+  will-change: width;
+}
+
+.sidebar-expanded {
+  width: 260px;
+}
+
+.sidebar-collapsed {
+  width: 35px;
+}
+
+.sidebar-container {
+  width: 100%;
+  height: 100vh;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-content {
+  width: 100%;
+  height: 100%;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar-content.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 新建对话按钮 - 与历史列表统一样式 */
+.new-chat-btn {
+  width: 100%;
+  padding: var(--spacing-m);
+  margin-bottom: var(--spacing-s);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-m);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.new-chat-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+.new-chat-btn:active {
+  background-color: var(--bg-active);
+  transform: scale(0.98);
+}
+
+.new-chat-btn .chat-icon {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.new-chat-btn:hover .chat-icon {
+  color: var(--text-primary);
+}
+
+/* ===== 任务3：响应式侧边栏功能 ===== */
+
+/* 主头部 */
+.main-header {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding: 0 var(--spacing-m);
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+  gap: var(--spacing-m);
+}
+
+/* 侧边栏切换按钮 */
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-m);
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.sidebar-toggle-btn:active {
+  background-color: var(--bg-active);
+  transform: scale(0.95);
+}
+
+/* 头部标题 */
+.header-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .welcome-panel {
+    padding: var(--spacing-l);
+  }
+
+  .welcome-title {
+    font-size: 2rem;
+  }
+
+  .prompts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar-hidden {
+    margin-left: -100%;
+  }
+}
+
+
+
+/* 卡片区域的过渡效果 */
+.digital-human-card,
+.chat-card,
+.input-card {
+  transition: all 0.3s ease-in-out;
+}
+
+/* 确保内容区域在侧边栏切换时正确适应 - 已移至主要定义处 */
+/* .digital-human-card flex-shrink样式已合并 */
+
+.chat-card {
+  flex-grow: 1;
+  min-width: 0; /* 允许收缩 */
+}
+
+/* 桌面端卡片布局 - 数字人在左，聊天在右 */
+@media (min-width: 768px) {
+  .chat-layout {
+    display: flex;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  /* .digital-human-card 桌面端样式已移至主要定义处 */
+
+  .chat-card {
+    width: 60%;
+    flex-grow: 1;
+  }
+}
+
+/* 移动端卡片布局 - 垂直堆叠，数字人在上方 */
+@media (max-width: 767px) {
+  .chat-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  /* 移动端顶部间距调整 - 已删除，卡片直接从顶部开始 */
+
+  .digital-human-card {
+    height: 180px;
+    width: 100%;
+    min-height: 180px;
+    max-height: 180px; /* 限制最大高度 */
+    order: 1; /* 确保数字人区域在上方 */
+  }
+
+  .chat-card {
+    flex: 1;
+    width: 100%;
+    min-height: 0; /* 允许flex收缩 */
+    order: 2; /* 确保聊天区域在下方 */
+  }
+
+  /* 移动端数字人卡片调整 */
+  .digital-human-card .digital-human-avatar {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .digital-human-card .digital-human-content {
+    padding: 0.75rem;
+  }
+
+  /* 移动端文字大小调整 */
+  .digital-human-card h2 {
+    font-size: 1rem !important;
+  }
+
+  .digital-human-card p,
+  .digital-human-card span {
+    font-size: 0.875rem !important;
+  }
+
+  /* 移动端数字人卡片顶部水平布局优化 */
+  .digital-human-card .flex.flex-row.items-center {
+    flex-wrap: nowrap; /* 确保不换行 */
+  }
+
+  .digital-human-card .flex.flex-row.items-center img {
+    width: 28px; /* 移动端稍微缩小队徽 */
+    height: 28px;
+  }
+}
+
+/* 平板端卡片布局调整 - 数字人在左，聊天在右 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .digital-human-card {
+    width: 35%;
+  }
+
+  .chat-card {
+    width: 65%;
+  }
+}
+
+/* ===== 卡片样式设计 ===== */
+
+/* 通用卡片样式 */
+.digital-human-card,
+.chat-card,
+.input-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+/* 输入框卡片特殊样式 */
+.input-card {
+  flex-shrink: 0;
+  padding: 1.25rem; /* 增加内边距，提供更舒适的输入体验 */
+}
+
+/* 聊天卡片内容区域 */
+.chat-card {
+  overflow: hidden; /* 确保圆角正确显示 */
+}
+
+/* 数字人卡片内容区域 */
+.digital-human-card {
+  overflow: hidden; /* 确保圆角正确显示 */
+}
+
+/* 确保在所有屏幕尺寸下布局都能正确适应侧边栏变化 */
+@media (min-width: 768px) {
+  /* 当侧边栏隐藏时，确保主内容区域能够充分利用空间 */
+  main {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* 防止布局在侧边栏切换时出现闪烁 */
+  .chat-layout {
+    will-change: transform;
+  }
+
+  .digital-human-card,
+  .chat-card {
+    will-change: width, transform;
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = ({ isVisible }) => {
+const Sidebar = ({ isVisible, toggleSidebar }) => {
   // 模拟聊天历史 - 添加文本截断处理
   const chatHistory = [
     { id: 1, title: '北京科技大学智能科学与技术学院', isActive: false },
@@ -17,16 +17,43 @@ const Sidebar = ({ isVisible }) => {
     return text.substring(0, maxLength) + '...';
   };
 
+  // 调试信息
+  console.log("Sidebar isVisible:", isVisible);
+
   return (
-    <aside className={`${isVisible ? 'w-[260px]' : 'w-0 p-0 overflow-hidden transform -translate-x-full'}
-      sidebar-container flex-shrink-0 transition-all ease-in-out duration-300 min-h-screen`}>
-      {isVisible && (
-        <div className="flex flex-col h-full min-h-screen">
-          {/* 顶部区域 - 标题和新建按钮 */}
-          <div className="px-5 pt-6 pb-3 border-b border-border/30">
-            <div className="text-sm font-semibold text-text-primary tracking-wide mb-4">
-              对话历史
-            </div>
+    <>
+      {/* 侧边栏主体 - 展开状态或超窄矩形条状态 */}
+      <aside
+        className={`${isVisible ? 'w-[260px]' : 'w-[35px]'}
+          sidebar-container flex-shrink-0 transition-all ease-in-out duration-300 min-h-screen bg-gray-100 relative`}
+        style={{
+          width: isVisible ? '260px' : '35px',
+          minWidth: isVisible ? '260px' : '35px',
+          maxWidth: isVisible ? '260px' : '35px'
+        }}
+      >
+        {isVisible ? (
+          <div className="flex flex-col h-full min-h-screen">
+            {/* 顶部区域 - 汉堡按钮和标题 */}
+            <div className="px-5 pt-4 pb-3 border-b border-border/30">
+              {/* 汉堡菜单按钮 - 侧边栏内部 */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-sm font-semibold text-text-primary tracking-wide">
+                  对话历史
+                </div>
+                <button
+                  onClick={toggleSidebar}
+                  className="group relative bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md text-gray-600 hover:text-gray-800 transition-all duration-300 rounded-lg w-9 h-9 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  title="收起侧边栏"
+                >
+                  {/* 汉堡菜单图标 - 展开状态显示X */}
+                  <div className="hamburger-icon w-4 h-4 flex flex-col justify-center items-center space-y-1">
+                    <span className="hamburger-line block w-4 h-0.5 bg-current transform transition-all duration-300 rotate-45 translate-y-1.5"></span>
+                    <span className="hamburger-line block w-4 h-0.5 bg-current transform transition-all duration-300 opacity-0"></span>
+                    <span className="hamburger-line block w-4 h-0.5 bg-current transform transition-all duration-300 -rotate-45 -translate-y-1.5"></span>
+                  </div>
+                </button>
+              </div>
 
             <button className="sidebar-new-chat-btn w-full py-2.5 px-4 text-text-primary rounded-xl flex items-center justify-center gap-3 text-sm font-medium group">
               <span className="plus-icon text-text-secondary text-lg group-hover:text-text-primary transition-colors">＋</span>
@@ -41,14 +68,16 @@ const Sidebar = ({ isVisible }) => {
                 {chatHistory.map((chat) => (
                   <li
                     key={chat.id}
-                    className={`chat-history-item relative py-1.5 px-3 rounded-lg cursor-pointer text-sm text-text-primary group
+                    className={`chat-history-item relative py-3 px-3 rounded-lg cursor-pointer text-sm transition-all duration-200 group
                       ${chat.isActive
-                        ? 'active bg-tertiary font-semibold shadow-sm'
-                        : 'hover:bg-tertiary/70 hover:shadow-sm'
+                        ? 'bg-gray-100 text-gray-900 font-medium'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                       }`}
                   >
-                    <div className="truncate group-hover:text-text-primary" title={chat.title}>
-                      {truncateText(chat.title)}
+                    <div className="flex items-center">
+                      <div className="truncate flex-1" title={chat.title}>
+                        {truncateText(chat.title)}
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -57,7 +86,6 @@ const Sidebar = ({ isVisible }) => {
               {/* 空状态提示 */}
               {chatHistory.length === 0 && (
                 <div className="text-center py-12 text-text-secondary">
-                  <div className="text-2xl mb-2">💬</div>
                   <div className="text-sm">暂无对话历史</div>
                   <div className="text-xs mt-1">开始新对话来创建历史记录</div>
                 </div>
@@ -65,32 +93,33 @@ const Sidebar = ({ isVisible }) => {
             </div>
           </div>
 
-          {/* 底部区域 - 数字人模型展示 */}
+          {/* 底部区域 - 简化信息 */}
           <div className="px-4 py-4 border-t border-border/30 mt-auto">
-            <div className="text-xs font-medium text-text-secondary mb-2 tracking-wide">
-              AI 助手
-            </div>
-            <div className="digital-human-area w-full aspect-[9/16] max-h-[280px] rounded-2xl flex flex-col justify-start items-center text-text-secondary pt-8">
-              <div className="text-4xl mb-3">🤖</div>
-              <div className="digital-human-status text-sm font-medium text-text-primary">涂序彦教授</div>
-              <div className="digital-human-status text-xs mt-1 text-center px-3">
-                人工智能领域专家
-              </div>
-              <div className="status-indicator w-2 h-2 bg-green-400 rounded-full mt-4"></div>
-            </div>
-
-            {/* 底部信息 */}
-            <div className="mt-3 pt-3">
-              <div className="sidebar-divider mb-3"></div>
-              <div className="text-xs text-text-secondary text-center">
-                <div>智能对话系统 v3.0</div>
-                <div className="mt-0.5 opacity-70">基于 DeepSeek API</div>
-              </div>
+            <div className="text-xs text-text-secondary text-center">
+              <div>涂序彦教授数字人模型</div>
+              <div className="mt-0.5 opacity-70">井溯序焰长明科技实践团</div>
             </div>
           </div>
         </div>
-      )}
-    </aside>
+        ) : (
+          /* 收起状态 - 紧凑的汉堡菜单按钮 */
+          <div className="flex flex-col h-full min-h-screen items-center pt-4">
+            <button
+              onClick={toggleSidebar}
+              className="group relative bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md text-gray-600 hover:text-gray-800 transition-all duration-300 rounded-md w-7 h-7 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              title="展开侧边栏"
+            >
+              {/* 汉堡菜单图标 - 收起状态显示三条线 */}
+              <div className="hamburger-icon w-3 h-3 flex flex-col justify-center items-center space-y-0.5">
+                <span className="hamburger-line block w-3 h-0.5 bg-current transform transition-all duration-300"></span>
+                <span className="hamburger-line block w-3 h-0.5 bg-current transform transition-all duration-300"></span>
+                <span className="hamburger-line block w-3 h-0.5 bg-current transform transition-all duration-300"></span>
+              </div>
+            </button>
+          </div>
+        )}
+      </aside>
+    </>
   );
 };
 

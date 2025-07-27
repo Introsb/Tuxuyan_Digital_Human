@@ -2,8 +2,9 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import AudioPlayer from './AudioPlayer';
 
-const MessageList = ({ messages }) => {
+const MessageList = ({ messages, isTtsOn = false, onRetryMessage }) => {
   console.log("MessageList - 渲染消息列表，消息数量:", messages.length);
   console.log("MessageList - 消息列表:", messages);
 
@@ -145,6 +146,27 @@ const MessageList = ({ messages }) => {
                 >
                   {message.text}
                 </ReactMarkdown>
+
+                {/* 重试按钮 - 只在错误消息且可重试时显示 */}
+                {message.isError && message.canRetry && onRetryMessage && (
+                  <div className="mt-3 flex justify-center">
+                    <button
+                      onClick={() => onRetryMessage(message.originalPrompt)}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium"
+                    >
+                      重试发送
+                    </button>
+                  </div>
+                )}
+
+                {/* 音频播放器 - 只在AI消息完成时显示 */}
+                {!message.isThinking && message.text && !message.isError && (
+                  <AudioPlayer
+                    text={message.text}
+                    isTtsOn={isTtsOn}
+                    autoPlay={message.isNew && isTtsOn} // 新消息且TTS开启时自动播放
+                  />
+                )}
                 </div>
               ) : null}
             </div>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
-import Header from './components/Header';
 import ChatArea from './components/ChatArea';
 
 const App = () => {
@@ -48,14 +47,18 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div
+      className="h-screen grid transition-all duration-300 ease-out"
+      style={{
+        gridTemplateColumns: sidebarVisible ? '260px 1fr' : '35px 1fr',
+        '--sidebar-width': sidebarVisible ? '260px' : '35px'
+      }}
+    >
       {/* Sidebar */}
-      <Sidebar isVisible={sidebarVisible} />
+      <Sidebar isVisible={sidebarVisible} toggleSidebar={toggleSidebar} />
 
-      {/* Main content area */}
-      <main className="flex-grow flex flex-col h-screen bg-primary">
-        <Header toggleSidebar={toggleSidebar} sidebarVisible={sidebarVisible} />
-        
+      {/* Main content area - 使用 Grid 自动占据剩余空间 */}
+      <main className="bg-gray-100 overflow-hidden">
         <ChatArea
           isWelcoming={isWelcomingState}
           messages={messages}

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASR前端功能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .record-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .record-btn:hover {
+            background: #0056b3;
+        }
+        .record-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .recording {
+            background: #dc3545 !important;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .result-area {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            min-height: 100px;
+        }
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 ASR语音识别功能测试</h1>
+            <p>测试涂序彦教授数字人项目的语音识别功能</p>
+        </div>
+
+        <!-- 后端状态检查 -->
+        <div class="test-section">
+            <h3>📡 后端服务状态</h3>
+            <button onclick="checkBackendStatus()" class="record-btn">检查后端状态</button>
+            <div id="backend-status" class="result-area">点击按钮检查后端服务状态...</div>
+        </div>
+
+        <!-- ASR功能测试 -->
+        <div class="test-section">
+            <h3>🎤 语音识别测试</h3>
+            <button id="record-btn" onclick="toggleRecording()" class="record-btn">开始录音</button>
+            <button onclick="clearResults()" class="record-btn">清除结果</button>
+            
+            <div class="status info">
+                <strong>使用说明:</strong>
+                <ol>
+                    <li>点击"开始录音"按钮</li>
+                    <li>对着麦克风说话（3-10秒）</li>
+                    <li>再次点击按钮停止录音</li>
+                    <li>等待语音识别结果</li>
+                </ol>
+            </div>
+
+            <div id="recording-status" class="result-area">等待录音...</div>
+            <div id="asr-result" class="result-area">识别结果将显示在这里...</div>
+        </div>
+
+        <!-- 模拟输入框测试 -->
+        <div class="test-section">
+            <h3>📝 文本填入测试</h3>
+            <textarea id="text-input" placeholder="语音识别的文本将自动填入这里..." 
+                      style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+        </div>
+
+        <!-- 日志区域 -->
+        <div class="test-section">
+            <h3>📋 测试日志</h3>
+            <div id="log-area" class="log-area">测试日志将显示在这里...</div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
+        // 日志函数
+        function log(message) {
+            const logArea = document.getElementById('log-area');
+            const timestamp = new Date().toLocaleTimeString();
+            logArea.innerHTML += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(message);
+        }
+
+        // 检查后端状态
+        async function checkBackendStatus() {
+            const statusDiv = document.getElementById('backend-status');
+            statusDiv.innerHTML = '检查中...';
+            
+            try {
+                log('🔍 检查后端服务状态...');
+                
+                // 检查基本连接
+                const healthResponse = await fetch('http://127.0.0.1:8000/');
+                if (!healthResponse.ok) {
+                    throw new Error(`后端服务不可用: ${healthResponse.status}`);
+                }
+                
+                const healthData = await healthResponse.json();
+                log(`✅ 后端服务正常: v${healthData.version}`);
+                
+                // 检查语音服务状态
+                const speechResponse = await fetch('http://127.0.0.1:8000/speech_status');
+                if (!speechResponse.ok) {
+                    throw new Error(`语音服务检查失败: ${speechResponse.status}`);
+                }
+                
+                const speechData = await speechResponse.json();
+                log(`🎤 ASR状态: ${speechData.asr_enabled ? '启用' : '禁用'}`);
+                
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>✅ 后端服务正常</strong><br>
+                        版本: ${healthData.version}<br>
+                        功能: ${healthData.features.join(', ')}<br>
+                        ASR启用: ${speechData.asr_enabled ? '是' : '否'}<br>
+                        百度语音: ${speechData.baidu_speech_available ? '可用' : '不可用'}
+                    </div>
+                `;
+                
+            } catch (error) {
+                log(`❌ 后端状态检查失败: ${error.message}`);
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ 后端服务异常</strong><br>
+                        错误: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // 切换录音状态
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                await startRecording();
+            }
+        }
+
+        // 开始录音
+        async function startRecording() {
+            try {
+                log('🎤 请求麦克风权限...');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        sampleRate: 16000,
+                        channelCount: 1,
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
+                
+                log('✅ 麦克风权限获取成功');
+                
+                // 检测支持的MIME类型
+                const mimeType = MediaRecorder.isTypeSupported('audio/wav') 
+                    ? 'audio/wav' 
+                    : MediaRecorder.isTypeSupported('audio/webm') 
+                    ? 'audio/webm' 
+                    : 'audio/ogg';
+                
+                log(`🎵 使用音频格式: ${mimeType}`);
+                
+                mediaRecorder = new MediaRecorder(stream, { mimeType });
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: mimeType });
+                    log(`🎵 录音完成，大小: ${audioBlob.size} bytes`);
+                    
+                    // 停止所有轨道
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // 发送到ASR
+                    await sendToASR(audioBlob, mimeType);
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // 更新UI
+                const recordBtn = document.getElementById('record-btn');
+                recordBtn.textContent = '停止录音';
+                recordBtn.classList.add('recording');
+                
+                document.getElementById('recording-status').innerHTML = `
+                    <div class="status info">
+                        <strong>🎤 正在录音...</strong><br>
+                        请对着麦克风说话，再次点击按钮停止录音
+                    </div>
+                `;
+                
+                log('🎤 开始录音...');
+                
+            } catch (error) {
+                log(`❌ 录音启动失败: ${error.message}`);
+                document.getElementById('recording-status').innerHTML = `
+                    <div class="status error">
+                        <strong>❌ 录音失败</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // 停止录音
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // 更新UI
+                const recordBtn = document.getElementById('record-btn');
+                recordBtn.textContent = '开始录音';
+                recordBtn.classList.remove('recording');
+                
+                document.getElementById('recording-status').innerHTML = `
+                    <div class="status info">
+                        <strong>⏳ 处理录音中...</strong><br>
+                        正在发送到语音识别服务...
+                    </div>
+                `;
+                
+                log('⏹️ 停止录音，开始处理...');
+            }
+        }
+
+        // 发送到ASR服务
+        async function sendToASR(audioBlob, mimeType) {
+            try {
+                log('📤 发送音频到ASR服务...');
+                
+                const formData = new FormData();
+                const fileName = mimeType.includes('wav') ? 'recording.wav' : 'recording.webm';
+                formData.append('audio_file', audioBlob, fileName);
+                
+                const response = await fetch('http://127.0.0.1:8000/asr', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`ASR服务错误: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                log(`📥 ASR响应: ${JSON.stringify(result)}`);
+                
+                // 显示结果
+                const resultDiv = document.getElementById('asr-result');
+                const textInput = document.getElementById('text-input');
+                
+                if (result.success && result.text && result.text.trim()) {
+                    log(`✅ 识别成功: ${result.text}`);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ 识别成功</strong><br>
+                            文本: ${result.text}<br>
+                            置信度: ${(result.confidence || 0).toFixed(2)}<br>
+                            消息: ${result.message}
+                        </div>
+                    `;
+                    
+                    // 填入文本框
+                    textInput.value = result.text.trim();
+                    textInput.focus();
+                    
+                } else {
+                    const errorMsg = result.message || '未识别到内容';
+                    log(`⚠️ 识别问题: ${errorMsg}`);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="status error">
+                            <strong>⚠️ 识别失败</strong><br>
+                            错误: ${errorMsg}
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('recording-status').innerHTML = `
+                    <div class="status success">
+                        <strong>✅ 处理完成</strong><br>
+                        可以开始新的录音
+                    </div>
+                `;
+                
+            } catch (error) {
+                log(`❌ ASR处理失败: ${error.message}`);
+                
+                document.getElementById('asr-result').innerHTML = `
+                    <div class="status error">
+                        <strong>❌ 识别失败</strong><br>
+                        错误: ${error.message}
+                    </div>
+                `;
+                
+                document.getElementById('recording-status').innerHTML = `
+                    <div class="status error">
+                        <strong>❌ 处理失败</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // 清除结果
+        function clearResults() {
+            document.getElementById('asr-result').innerHTML = '识别结果将显示在这里...';
+            document.getElementById('recording-status').innerHTML = '等待录音...';
+            document.getElementById('text-input').value = '';
+            document.getElementById('log-area').innerHTML = '测试日志将显示在这里...\n';
+            log('🧹 已清除所有结果');
+        }
+
+        // 页面加载时自动检查后端状态
+        window.onload = function() {
+            log('🚀 ASR前端测试页面加载完成');
+            checkBackendStatus();
+        };
+    </script>
+</body>
+</html>
